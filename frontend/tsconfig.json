@@ -11,6 +11,6 @@
       "@app/shared": ["../packages/shared/src/index.ts"]
     }
   },
-  "include": ["src"],
+  "include": ["app", ".react-router/types/**/*"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
