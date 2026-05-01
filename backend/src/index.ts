@@ -1,14 +1,14 @@
 import express from 'express'
-import type { HelloMessage } from '@app/shared'
+import { PORT } from './config/env.js'
+import helloRouter from './modules/hello/hello.routes.js'
+import { notFound } from './middleware/notFound.js'
 
 const app = express()
-const port = 3001
 
-app.get('/', (_req, res) => {
-  const body: HelloMessage = { message: 'Hello from Express' }
-  res.json(body)
-})
+app.use(express.json())
+app.use('/hello', helloRouter)
+app.use(notFound)
 
-app.listen(port, () => {
-  console.log(`Backend running on http://localhost:${port}`)
+app.listen(PORT, () => {
+  console.log(`Backend running on http://localhost:${PORT}`)
 })
