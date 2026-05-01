@@ -112,9 +112,9 @@ app.get('/path', async (req, res) => {
 
 No `next`, no try/catch in controllers.
 
-Other Express 5 changes relevant to this template:
-- `express.json()` is now included — no need for the `body-parser` package
-- Route path syntax changed (path-to-regexp v8) — some Express 4 regex-style paths are invalid
+Other changes relevant to this template:
+- `express.json()` is built in (since Express 4.16) — no need for the `body-parser` package
+- Route path syntax changed in Express 5 (path-to-regexp v8) — some Express 4 regex-style paths are invalid
 
 ## React Router v7 Notes
 
@@ -127,6 +127,8 @@ Other Express 5 changes relevant to this template:
 **File-based routing.** Files in `app/routes/` are registered automatically. No route definition file needed.
 
 **Generated types.** React Router generates per-route types into `frontend/.react-router/types/` at dev/build time. This directory is gitignored — it appears after the first `npm run dev`.
+
+**Root layout requirements.** `app/root.tsx` must include `<Scripts />` and `<ScrollRestoration />` from `'react-router'`. These are required by framework mode — they inject the client bundle and restore scroll position between navigations.
 
 ## Forking This Template
 
