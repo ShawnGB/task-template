@@ -7,7 +7,7 @@
     "dev": "tsx watch src/index.ts"
   },
   "dependencies": {
-    "@knots/shared": "*",
+    "@app/shared": "*",
     "express": "^5.2.1"
   },
   "devDependencies": {

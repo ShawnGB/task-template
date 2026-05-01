@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@knots/shared": "*",
+    "@app/shared": "*",
     "react": "^19.2.5",
     "react-dom": "^19.2.5"
   },

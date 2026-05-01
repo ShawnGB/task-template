@@ -1,5 +1,5 @@
 {
-  "name": "knots-task",
+  "name": "app",
   "private": true,
   "workspaces": [
     "packages/*",

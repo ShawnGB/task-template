@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { HelloMessage } from '@knots/shared'
+import type { HelloMessage } from '@app/shared'
 
 function App() {
   const [message, setMessage] = useState<string | null>(null)

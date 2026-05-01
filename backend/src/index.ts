@@ -1,5 +1,5 @@
 import express from 'express'
-import type { HelloMessage } from '@knots/shared'
+import type { HelloMessage } from '@app/shared'
 
 const app = express()
 const port = 3001
