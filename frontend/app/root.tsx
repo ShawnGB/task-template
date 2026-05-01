@@ -1,4 +1,4 @@
-import { Outlet, Scripts, ScrollRestoration } from 'react-router'
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
 
 export default function Root() {
   return (
@@ -6,6 +6,8 @@ export default function Root() {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <Links />
         <title>App</title>
       </head>
       <body>

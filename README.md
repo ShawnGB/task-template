@@ -139,8 +139,7 @@ Update these files after forking:
 3. `backend/package.json` → change `"@app/shared": "*"` to `@yourscope/shared`
 4. `frontend/package.json` → same
 5. `backend/src/modules/hello/hello.service.ts` → import path
-6. `backend/src/modules/hello/hello.controller.ts` → import path
-7. `backend/tsconfig.json` → `paths` alias key
-8. `frontend/tsconfig.json` → `paths` alias key
-9. `frontend/vite.config.ts` → alias key
-10. Run `npm install` to regenerate `package-lock.json`
+6. `backend/tsconfig.json` → `paths` alias key
+7. `frontend/tsconfig.json` → `paths` alias key
+8. `frontend/vite.config.ts` → alias key
+9. Run `npm install` to regenerate `package-lock.json`
