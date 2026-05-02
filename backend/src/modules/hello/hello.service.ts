@@ -1,4 +1,3 @@
-import type { HelloMessage } from '@app/shared'
 import { AppError } from '../../middleware/AppError.js'
 
 export function getHelloMessage(name?: string): HelloMessage {

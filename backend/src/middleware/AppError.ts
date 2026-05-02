@@ -1,5 +1,3 @@
-import type { ApiErrorCode } from '@app/shared'
-
 export class AppError extends Error {
   constructor(
     public readonly statusCode: number,

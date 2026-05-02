@@ -12,6 +12,6 @@
       "@/*": ["./app/*"]
     }
   },
-  "include": ["app", ".react-router/types/**/*"],
+  "include": ["app", ".react-router/types/**/*", "../packages/shared/src/globals.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

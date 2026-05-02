@@ -1,4 +1,3 @@
-import type { ApiResponse } from '@app/shared'
 import { isApiError } from './errors'
 
 export async function fetchApi<T>(url: string): Promise<ApiResponse<T>> {

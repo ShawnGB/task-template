@@ -1,20 +1,20 @@
-export type HelloMessage = {
+interface HelloMessage {
   message: string
 }
 
-export type ApiErrorCode =
+type ApiErrorCode =
   | 'NOT_FOUND'
   | 'VALIDATION_ERROR'
   | 'INTERNAL_ERROR'
   | 'UNAUTHORIZED'
   | 'UNKNOWN'
 
-export type ApiError = {
+interface ApiError {
   message: string
   code: ApiErrorCode
   statusCode: number
 }
 
-export type ApiResponse<T> =
+type ApiResponse<T> =
   | { data: T; error: null }
   | { data: null; error: ApiError }

@@ -1,5 +1,4 @@
 import { isRouteErrorResponse, useLoaderData, useRouteError } from 'react-router'
-import type { HelloMessage } from '@app/shared'
 import { fetchApi } from '@/lib/api'
 
 export async function loader() {
