@@ -1,0 +1,43 @@
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import { fetchApi } from './api'
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
+
+describe('fetchApi', () => {
+  it('returns data on a successful response', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ message: 'Hello from Express' }),
+    }))
+    const result = await fetchApi<{ message: string }>('/api/hello')
+    expect(result).toEqual({ data: { message: 'Hello from Express' }, error: null })
+  })
+
+  it('returns ApiError when response is not ok and body is valid', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: false,
+      status: 404,
+      json: async () => ({ message: 'Not found', code: 'NOT_FOUND', statusCode: 404 }),
+    }))
+    const result = await fetchApi('/api/missing')
+    expect(result).toEqual({
+      data: null,
+      error: { message: 'Not found', code: 'NOT_FOUND', statusCode: 404 },
+    })
+  })
+
+  it('returns generic error when response body is unparseable', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: false,
+      status: 503,
+      json: async () => { throw new Error('not json') },
+    }))
+    const result = await fetchApi('/api/hello')
+    expect(result).toEqual({
+      data: null,
+      error: { message: 'Unexpected error', code: 'UNKNOWN', statusCode: 503 },
+    })
+  })
+})
