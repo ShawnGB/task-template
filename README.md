@@ -55,10 +55,16 @@ npm run test --workspace=frontend    # frontend only
 │       └── index.ts        App entry point
 ├── frontend/
 │   └── app/
-│       ├── root.tsx        Root HTML layout
-│       └── routes/         File-based routes
+│       ├── components/     Shared UI components (ErrorBoundary, etc.)
+│       ├── hooks/          Custom React hooks (useRouteErrorMessage, etc.)
+│       ├── lib/            Utilities (fetchApi, isApiError)
+│       ├── store/          State management (empty — add Zustand/Redux/etc. here)
+│       ├── routes/         File-based routes
+│       └── root.tsx        Root HTML layout
 ├── packages/
-│   └── shared/             @app/shared — shared TypeScript types
+│   └── shared/
+│       └── src/
+│           └── globals.d.ts  Global ambient types (no imports needed)
 └── docker-compose.yml
 ```
 
@@ -71,9 +77,19 @@ Both workspaces expose `@/` as a shortcut to their source root:
 | `@/lib/api` | `frontend/app/lib/api.ts` |
 | `@/middleware/AppError.js` | `backend/src/middleware/AppError.ts` |
 
-`@app/shared` continues to resolve to `packages/shared/src/index.ts` in both workspaces.
-
 > **Backend production build note:** `@/` is resolved at dev time by `tsx`. If you add a `tsc` build step, install `tsc-alias` and run `tsc-alias -p tsconfig.json` after `tsc` to rewrite the paths in the compiled output.
+
+## Shared Types
+
+Types in `packages/shared/src/globals.d.ts` are globally available in both backend and frontend — no import needed.
+
+```typescript
+// Just use them directly in any file:
+const response: ApiResponse<HelloMessage> = ...
+const err: ApiError = ...
+```
+
+To add a new shared type, add it to `globals.d.ts` as an `interface` or `type` (no `export` keyword).
 
 ## Environment Variables
 
@@ -117,8 +133,9 @@ Add a file to `frontend/app/routes/`. React Router picks it up automatically.
 | `dashboard._index.tsx` | `/dashboard` (nested) |
 
 Each route file can export:
-- `loader` — fetch data before rendering (runs client-side in SPA mode)
+- `clientLoader` — fetch data before rendering (SPA mode; use `clientLoader`, not `loader`)
 - `action` — handle form submissions
+- `ErrorBoundary` — error UI for this route (re-export from `@/components/ErrorBoundary` or define locally)
 - `default` — the page component
 
 ## Express 5 Notes
@@ -174,12 +191,6 @@ Other changes relevant to this template:
 Update these files after forking:
 
 1. `package.json` → change `"name": "app"` to your project name
-2. `packages/shared/package.json` → change `"name": "@app/shared"` to `@yourscope/shared`
-3. `backend/package.json` → change `"@app/shared": "*"` to `@yourscope/shared`
-4. `frontend/package.json` → same
-5. `backend/src/modules/hello/hello.service.ts` → import path
-6. `backend/tsconfig.json` → `paths` alias key
-7. `frontend/tsconfig.json` → `paths` alias key
-8. `frontend/vite.config.ts` → alias key
-9. `frontend/vitest.config.ts` → alias key (tests resolve `@app/shared` separately from Vite)
-10. Run `npm install` to regenerate `package-lock.json`
+2. `backend/src/modules/hello/` → replace or remove the hello module
+3. `frontend/app/routes/_index.tsx` → replace the Home route
+4. Run `npm install` to regenerate `package-lock.json`
