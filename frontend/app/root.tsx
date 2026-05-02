@@ -1,21 +1,14 @@
 import {
-  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
-  useRouteError,
 } from 'react-router'
+import { useRouteErrorMessage } from '@/hooks/useRouteErrorMessage'
 
 export function ErrorBoundary() {
-  const error = useRouteError()
-  const message = isRouteErrorResponse(error)
-    ? (error.data?.message ?? error.statusText)
-    : error instanceof Error
-      ? error.message
-      : 'Something went wrong'
-
+  const message = useRouteErrorMessage()
   return (
     <html lang="en">
       <head>
