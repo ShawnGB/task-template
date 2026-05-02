@@ -1,18 +1,10 @@
-import { isRouteErrorResponse, useLoaderData, useRouteError } from 'react-router'
+import { useLoaderData } from 'react-router'
 import { fetchApi } from '@/lib/api'
+
+export { ErrorBoundary } from '@/components/ErrorBoundary'
 
 export async function clientLoader() {
   return fetchApi<HelloMessage>('/api/hello')
-}
-
-export function ErrorBoundary() {
-  const error = useRouteError()
-  const message = isRouteErrorResponse(error)
-    ? (error.data?.message ?? error.statusText)
-    : error instanceof Error
-      ? error.message
-      : 'Something went wrong'
-  return <p>Error: {message}</p>
 }
 
 export default function Home() {
