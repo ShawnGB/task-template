@@ -35,6 +35,14 @@ docker compose down                                    # stop
 docker compose down -v && docker compose up --build    # after changing dependencies
 ```
 
+### Testing
+
+```bash
+npm test                             # run all tests (backend + frontend)
+npm run test --workspace=backend     # backend only
+npm run test --workspace=frontend    # frontend only
+```
+
 ## Project Structure
 
 ```
@@ -42,8 +50,8 @@ docker compose down -v && docker compose up --build    # after changing dependen
 │   └── src/
 │       ├── modules/        Feature modules (routes + controller + service)
 │       │   └── hello/
-│       ├── middleware/     Shared Express middleware
-│       ├── config/         Environment config
+│       ├── middleware/     AppError, errorHandler, notFound
+│       ├── config/         env.ts (zod-validated), envSchema.ts
 │       └── index.ts        App entry point
 ├── frontend/
 │   └── app/
@@ -52,6 +60,37 @@ docker compose down -v && docker compose up --build    # after changing dependen
 ├── packages/
 │   └── shared/             @app/shared — shared TypeScript types
 └── docker-compose.yml
+```
+
+## Path Aliases
+
+Both workspaces expose `@/` as a shortcut to their source root:
+
+| Import | Resolves to |
+|---|---|
+| `@/lib/api` | `frontend/app/lib/api.ts` |
+| `@/middleware/AppError.js` | `backend/src/middleware/AppError.ts` |
+
+`@app/shared` continues to resolve to `packages/shared/src/index.ts` in both workspaces.
+
+> **Backend production build note:** `@/` is resolved at dev time by `tsx`. If you add a `tsc` build step, install `tsc-alias` and run `tsc-alias -p tsconfig.json` after `tsc` to rewrite the paths in the compiled output.
+
+## Environment Variables
+
+Copy `backend/.env.example` to `backend/.env` and fill in values:
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+The backend validates all env vars at startup using zod — if a required var is missing or has the wrong type, the process exits immediately with a clear error message.
+
+Add `VITE_*` frontend variables to `frontend/app/vite-env.d.ts` to keep them typed:
+
+```typescript
+interface ImportMetaEnv {
+  readonly VITE_API_URL: string  // example
+}
 ```
 
 ## Adding a Backend Feature

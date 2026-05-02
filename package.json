@@ -5,5 +5,8 @@
     "packages/*",
     "backend",
     "frontend"
-  ]
+  ],
+  "scripts": {
+    "test": "npm run test --workspace=backend && npm run test --workspace=frontend"
+  }
 }
