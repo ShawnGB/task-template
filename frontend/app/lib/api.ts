@@ -1,4 +1,5 @@
-import type { ApiError, ApiResponse } from '@app/shared'
+import type { ApiResponse } from '@app/shared'
+import { isApiError } from './errors'
 
 export async function fetchApi<T>(url: string): Promise<ApiResponse<T>> {
   const res = await fetch(url)
@@ -9,16 +10,18 @@ export async function fetchApi<T>(url: string): Promise<ApiResponse<T>> {
   }
 
   try {
-    const error: ApiError = await res.json()
-    return { data: null, error }
+    const body: unknown = await res.json()
+    if (isApiError(body)) return { data: null, error: body }
   } catch {
-    return {
-      data: null,
-      error: {
-        message: 'Unexpected error',
-        code: 'UNKNOWN',
-        statusCode: res.status,
-      },
-    }
+    // unparseable body falls through
+  }
+
+  return {
+    data: null,
+    error: {
+      message: 'Unexpected error',
+      code: 'UNKNOWN',
+      statusCode: res.status,
+    },
   }
 }

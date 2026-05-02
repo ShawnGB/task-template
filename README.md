@@ -181,4 +181,5 @@ Update these files after forking:
 6. `backend/tsconfig.json` → `paths` alias key
 7. `frontend/tsconfig.json` → `paths` alias key
 8. `frontend/vite.config.ts` → alias key
-9. Run `npm install` to regenerate `package-lock.json`
+9. `frontend/vitest.config.ts` → alias key (tests resolve `@app/shared` separately from Vite)
+10. Run `npm install` to regenerate `package-lock.json`

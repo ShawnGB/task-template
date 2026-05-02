@@ -16,6 +16,7 @@ describe('getHelloMessage', () => {
   })
 
   it('thrown AppError has 400 status and VALIDATION_ERROR code', () => {
+    expect.assertions(3)
     try {
       getHelloMessage('error')
     } catch (err) {
