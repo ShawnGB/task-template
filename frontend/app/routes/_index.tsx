@@ -1,7 +1,7 @@
 import { isRouteErrorResponse, useLoaderData, useRouteError } from 'react-router'
 import { fetchApi } from '@/lib/api'
 
-export async function loader() {
+export async function clientLoader() {
   return fetchApi<HelloMessage>('/api/hello')
 }
 
@@ -16,7 +16,7 @@ export function ErrorBoundary() {
 }
 
 export default function Home() {
-  const result = useLoaderData<typeof loader>()
+  const result = useLoaderData<typeof clientLoader>()
 
   if (result.error) {
     return <p>Error: {result.error.message}</p>
