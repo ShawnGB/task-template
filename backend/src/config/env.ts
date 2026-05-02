@@ -1,1 +1,13 @@
-export const PORT = Number(process.env.PORT) || 3001
+import 'dotenv/config'
+import { envSchema } from './envSchema.js'
+
+const parsed = envSchema.safeParse(process.env)
+
+if (!parsed.success) {
+  console.error('Invalid environment variables:')
+  console.error(parsed.error.flatten().fieldErrors)
+  process.exit(1)
+}
+
+export const env = parsed.data
+export const PORT = env.PORT
