@@ -1,13 +1,27 @@
-import { useLoaderData } from 'react-router'
+import { isRouteErrorResponse, useLoaderData, useRouteError } from 'react-router'
 import type { HelloMessage } from '@app/shared'
+import { fetchApi } from '@/lib/api'
 
 export async function loader() {
-  const res = await fetch('/api/hello')
-  const data: HelloMessage = await res.json()
-  return data
+  return fetchApi<HelloMessage>('/api/hello')
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError()
+  const message = isRouteErrorResponse(error)
+    ? (error.data?.message ?? error.statusText)
+    : error instanceof Error
+      ? error.message
+      : 'Something went wrong'
+  return <p>Error: {message}</p>
 }
 
 export default function Home() {
-  const { message } = useLoaderData<typeof loader>()
-  return <h1>{message}</h1>
+  const result = useLoaderData<typeof loader>()
+
+  if (result.error) {
+    return <p>Error: {result.error.message}</p>
+  }
+
+  return <h1>{result.data.message}</h1>
 }
