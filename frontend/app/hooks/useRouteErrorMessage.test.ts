@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { renderHook } from '@testing-library/react'
+import { UNSAFE_ErrorResponseImpl } from 'react-router'
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>()
@@ -17,25 +18,27 @@ describe('useRouteErrorMessage', () => {
   })
 
   it('returns data.message from a route error response', () => {
-    vi.mocked(useRouteError).mockReturnValue({
-      status: 404,
-      statusText: 'Not Found',
-      data: { message: 'Resource not found' },
-      internal: false,
-    })
+    vi.mocked(useRouteError).mockReturnValue(
+      new UNSAFE_ErrorResponseImpl(404, 'Not Found', { message: 'Resource not found' })
+    )
     const { result } = renderHook(() => useRouteErrorMessage())
     expect(result.current).toBe('Resource not found')
   })
 
   it('falls back to statusText when data.message is absent', () => {
-    vi.mocked(useRouteError).mockReturnValue({
-      status: 500,
-      statusText: 'Server Error',
-      data: null,
-      internal: false,
-    })
+    vi.mocked(useRouteError).mockReturnValue(
+      new UNSAFE_ErrorResponseImpl(500, 'Server Error', null)
+    )
     const { result } = renderHook(() => useRouteErrorMessage())
     expect(result.current).toBe('Server Error')
+  })
+
+  it('falls back to statusText when data is a plain string', () => {
+    vi.mocked(useRouteError).mockReturnValue(
+      new UNSAFE_ErrorResponseImpl(403, 'Forbidden', 'Forbidden')
+    )
+    const { result } = renderHook(() => useRouteErrorMessage())
+    expect(result.current).toBe('Forbidden')
   })
 
   it('returns fallback string for unknown error shapes', () => {
