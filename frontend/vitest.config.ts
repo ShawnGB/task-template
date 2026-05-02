@@ -9,7 +9,6 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@app/shared': fileURLToPath(new URL('../packages/shared/src/index.ts', import.meta.url)),
       '@': fileURLToPath(new URL('./app', import.meta.url)),
     },
   },
