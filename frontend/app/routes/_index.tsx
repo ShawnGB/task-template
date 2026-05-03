@@ -3,6 +3,10 @@ import { fetchApi } from '@/lib/api'
 
 export { ErrorBoundary } from '@/components/ErrorBoundary'
 
+export function HydrateFallback() {
+  return <p>Loading…</p>
+}
+
 export async function clientLoader() {
   return fetchApi<HelloMessage>('/api/hello')
 }
