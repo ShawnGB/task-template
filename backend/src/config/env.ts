@@ -10,4 +10,3 @@ if (!parsed.success) {
 }
 
 export const env = parsed.data
-export const PORT = env.PORT
