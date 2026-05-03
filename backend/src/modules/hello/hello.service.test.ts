@@ -3,12 +3,12 @@ import { getHelloMessage } from './hello.service.js'
 import { AppError } from '../../lib/AppError.js'
 
 describe('getHelloMessage', () => {
-  it('returns HelloMessage', () => {
+  it('returns default message when no name is given', () => {
     expect(getHelloMessage()).toEqual({ message: 'Hello from Express' })
   })
 
-  it('returns HelloMessage when name is provided', () => {
-    expect(getHelloMessage('world')).toEqual({ message: 'Hello from Express' })
+  it('returns personalised message when name is given', () => {
+    expect(getHelloMessage('world')).toEqual({ message: 'Hello, world' })
   })
 
   it('throws AppError when name is "error"', () => {
