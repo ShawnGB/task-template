@@ -50,13 +50,14 @@ npm run test --workspace=frontend    # frontend only
 │   └── src/
 │       ├── modules/        Feature modules (routes + controller + service)
 │       │   └── hello/
-│       ├── middleware/     AppError, errorHandler, notFound
+│       ├── middleware/     errorHandler, notFound
+│       ├── lib/            Shared utilities (AppError)
 │       ├── config/         env.ts (zod-validated), envSchema.ts
 │       └── index.ts        App entry point
 ├── frontend/
 │   └── app/
-│       ├── components/     Shared UI components (ErrorBoundary, etc.)
-│       ├── hooks/          Custom React hooks (useRouteErrorMessage, etc.)
+│       ├── components/     Shared UI components (ErrorBoundary)
+│       ├── hooks/          Custom React hooks (useRouteErrorMessage)
 │       ├── lib/            Utilities (fetchApi, isApiError)
 │       ├── store/          State management (empty — add Zustand/Redux/etc. here)
 │       ├── routes/         File-based routes
@@ -75,7 +76,7 @@ Both workspaces expose `@/` as a shortcut to their source root:
 | Import | Resolves to |
 |---|---|
 | `@/lib/api` | `frontend/app/lib/api.ts` |
-| `@/middleware/AppError.js` | `backend/src/middleware/AppError.ts` |
+| `@/lib/AppError.js` | `backend/src/lib/AppError.ts` |
 
 > **Backend production build note:** `@/` is resolved at dev time by `tsx`. If you add a `tsc` build step, install `tsc-alias` and run `tsc-alias -p tsconfig.json` after `tsc` to rewrite the paths in the compiled output.
 
@@ -91,6 +92,48 @@ const err: ApiError = ...
 
 To add a new shared type, add it to `globals.d.ts` as an `interface` or `type` (no `export` keyword).
 
+## Error Handling
+
+The template ships a typed error contract that runs end-to-end.
+
+**Backend — throwing errors**
+
+Services throw `AppError` for expected failures. `errorHandler` (registered last in `index.ts`) converts it to `ApiError` JSON automatically. Unknown errors log and return a generic 500.
+
+```typescript
+import { AppError } from '@/lib/AppError.js'
+
+// In a service:
+if (!found) throw new AppError(404, 'NOT_FOUND', 'Resource not found')
+```
+
+`ApiErrorCode` values are declared in `packages/shared/src/globals.d.ts`. Add codes there as the app grows.
+
+**Frontend — consuming errors**
+
+`fetchApi<T>` never throws — it always resolves to `ApiResponse<T>`:
+
+```typescript
+import { fetchApi } from '@/lib/api'
+
+const result = await fetchApi<MyType>('/api/resource')
+
+if (result.error) {
+  // result.error is ApiError — typed, never null here
+  console.error(result.error.message)
+} else {
+  // result.data is MyType — never null here
+}
+```
+
+For route-level crashes (unexpected throws, network failures before a response), export `ErrorBoundary` from `@/components/ErrorBoundary` in your route file:
+
+```typescript
+export { ErrorBoundary } from '@/components/ErrorBoundary'
+```
+
+`useRouteErrorMessage` (`@/hooks/useRouteErrorMessage`) extracts a human-readable string from any React Router error shape — use it if you need a custom error UI.
+
 ## Environment Variables
 
 Copy `backend/.env.example` to `backend/.env` and fill in values:
@@ -100,6 +143,18 @@ cp backend/.env.example backend/.env
 ```
 
 The backend validates all env vars at startup using zod — if a required var is missing or has the wrong type, the process exits immediately with a clear error message.
+
+To add a new backend env var:
+
+1. Add it to `backend/src/config/envSchema.ts`:
+   ```typescript
+   export const envSchema = z.object({
+     PORT: z.coerce.number().default(3001),
+     DATABASE_URL: z.string().url(),  // add here
+   })
+   ```
+2. Add it to `backend/.env.example` and `backend/.env`
+3. Access it anywhere via `env.DATABASE_URL` (import `env` from `@/config/env.js`)
 
 Add `VITE_*` frontend variables to `frontend/app/vite-env.d.ts` to keep them typed:
 
@@ -188,9 +243,13 @@ Other changes relevant to this template:
 
 ## Forking This Template
 
-Update these files after forking:
-
 1. `package.json` → change `"name": "app"` to your project name
-2. `backend/src/modules/hello/` → replace or remove the hello module
-3. `frontend/app/routes/_index.tsx` → replace the Home route
-4. Run `npm install` to regenerate `package-lock.json`
+2. `packages/shared/package.json` → change `"name": "@app/shared"` to `@yourscope/shared`
+3. Update all references to `@app/shared` in:
+   - `backend/tsconfig.json` (paths alias key — if you re-add a module alias)
+   - `frontend/tsconfig.json` (paths alias key — if you re-add a module alias)
+   - `frontend/vite.config.ts` (alias key — if you re-add a Vite alias)
+4. Replace `backend/src/modules/hello/` with your first feature module
+5. Replace `frontend/app/routes/_index.tsx` with your home route
+6. Add your env vars to `backend/src/config/envSchema.ts` and `.env.example`
+7. Run `npm install` to regenerate `package-lock.json`
