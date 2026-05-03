@@ -1,7 +1,12 @@
 import { isApiError } from './errors'
 
 export async function fetchApi<T>(url: string): Promise<ApiResponse<T>> {
-  const res = await fetch(url)
+  let res: Response
+  try {
+    res = await fetch(url)
+  } catch {
+    return { data: null, error: { message: 'Network error', code: 'UNKNOWN', statusCode: 0 } }
+  }
 
   if (res.ok) {
     const data: T = await res.json()

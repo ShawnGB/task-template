@@ -54,6 +54,15 @@ describe('fetchApi', () => {
       error: { message: 'Unexpected error', code: 'UNKNOWN', statusCode: 502 },
     })
   })
+
+  it('returns network error when fetch rejects', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Failed to fetch')))
+    const result = await fetchApi('/api/hello')
+    expect(result).toEqual({
+      data: null,
+      error: { message: 'Network error', code: 'UNKNOWN', statusCode: 0 },
+    })
+  })
 })
 
 describe('isApiError', () => {
