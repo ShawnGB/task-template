@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
+import { AppError } from '../lib/AppError.js'
 
-export function notFound(_req: Request, res: Response, _next: NextFunction): void {
-  res.status(404).json({ error: 'Not found' })
+export function notFound(_req: Request, _res: Response, next: NextFunction): void {
+  next(new AppError(404, 'NOT_FOUND', 'Not found'))
 }
