@@ -1,4 +1,4 @@
-import { AppError } from '../../middleware/AppError.js'
+import { AppError } from '../../lib/AppError.js'
 
 export function getHelloMessage(name?: string): HelloMessage {
   if (name === 'error') {

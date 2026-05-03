@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { getHelloMessage } from './hello.service.js'
-import { AppError } from '../../middleware/AppError.js'
+import { AppError } from '../../lib/AppError.js'
 
 describe('getHelloMessage', () => {
   it('returns HelloMessage', () => {

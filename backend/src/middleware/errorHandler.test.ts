@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import type { Request, Response, NextFunction } from 'express'
-import { AppError } from './AppError.js'
+import { AppError } from '../lib/AppError.js'
 import { errorHandler } from './errorHandler.js'
 
 function mockRes(): Response {
