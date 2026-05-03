@@ -66,4 +66,8 @@ describe('isApiError', () => {
     expect(isApiError(null)).toBe(false)
     expect(isApiError('string')).toBe(false)
   })
+
+  it('returns false when fields exist but have wrong types', () => {
+    expect(isApiError({ message: 42, code: null, statusCode: 'bad' })).toBe(false)
+  })
 })
