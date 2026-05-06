@@ -3,16 +3,12 @@ import { fetchApi } from '@/lib/api'
 
 export { ErrorBoundary } from '@/components/ErrorBoundary'
 
-export function HydrateFallback() {
-  return <p>Loading…</p>
-}
-
-export async function clientLoader() {
+export async function loader() {
   return fetchApi<HelloMessage>('/api/hello')
 }
 
 export default function Home() {
-  const result = useLoaderData<typeof clientLoader>()
+  const result = useLoaderData<typeof loader>()
 
   if (result.error) {
     return <p>Error: {result.error.message}</p>

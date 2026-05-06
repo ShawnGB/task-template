@@ -1,9 +1,17 @@
 import { isApiError } from './errors'
 
+function resolveUrl(url: string): string {
+  if (url.startsWith('/') && typeof window === 'undefined') {
+    const base = process.env.BACKEND_URL ?? 'http://localhost:3001'
+    return `${base}${url}`
+  }
+  return url
+}
+
 export async function fetchApi<T>(url: string): Promise<ApiResponse<T>> {
   let res: Response
   try {
-    res = await fetch(url)
+    res = await fetch(resolveUrl(url))
   } catch {
     return { data: null, error: { message: 'Network error', code: 'UNKNOWN', statusCode: 0 } }
   }
